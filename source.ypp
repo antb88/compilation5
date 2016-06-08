@@ -1,0 +1,455 @@
+%{ 
+	#include "source.hpp"
+	extern int yylineno;
+	int yylex();
+	void yyerror(const char*);
+
+	/* helper functions */
+	void assertNotDefinedInScope(string& name);
+	void assertTypeAssignment(VarType from, VarType to);
+	void assertDefinedGlobaly(string& name);
+	void assertVarTypeNot(VarType forbidden, VarType type);
+	void assertVarType(VarType desired, VarType type);
+	void assertCanBreak();
+	void assertThat(bool condition);
+
+	/* IR functuins */
+	void emitRopExpression(Attribute& target, Attribute& first, string rop, Attribute& third);
+	void emitAopExpression(string target, string lhs, string aop, string rhs) ;
+	string toDecimal(string numstr, int base);
+	int getBaseOf(VarType varType);
+	void print(string num, VarType type);
+
+
+	static SymbolTable st;
+	static int inBreak = 0;
+	static int inCond = 0;
+%}
+%token LP 
+%token RP
+%token LC
+%token RC
+%token SC
+%token COL
+%token INT
+%token DECIMAL
+%token BINARY
+%token HEXIDECIMAL
+%token PRINT
+%token INPUT
+%token TRUE
+%token FALSE
+%token WHILE
+%token BREAK
+%token BOOL
+%token SWITCH
+%token CASE
+%token ID
+%token STRING
+%token NUM
+%nonassoc IF
+%nonassoc ELSE
+%right ASSIGN	
+%left OR
+%left AND	
+%left EVEN_LT
+%left EVEN_GT
+%left EVEN
+%left NOT_EVEN
+%left LT
+%left GT
+%left PLUS MINUS
+%left MULT DIV	
+%right NOT
+%%
+
+Prog : BEGSCOPE Statements ENDSCOPE	;
+
+BEGOLS : /*epsilon*/ {
+	st.newScope();
+}
+
+ENDOLS : /*epsilon*/ {
+	if (st.currentScope().size()) {
+		st.deleteAndPrintScope();
+	}
+	else {
+		st.deleteScope();
+	}
+} 
+
+
+BEGSCOPE : /*epsilon*/ {
+	st.newScope();
+}
+
+ENDSCOPE : /*epsilon*/ {
+	st.deleteAndPrintScope();	
+}
+
+BEGBREAK : /*epsilon*/ {
+	inBreak++;
+}
+
+ENDBREAK : /*epsilon*/ {
+	inBreak--;
+}
+
+M : /*epsilon*/ {
+	$$.next = next();
+}
+
+IN_COND : /*epsilon*/ {
+	inCond++;
+}
+
+END_IN_COND : /*epsilon*/ {
+	inCond--;
+}
+
+Statements : Statements Statement ;					
+Statements : Statement ;								
+Statement : LC BEGSCOPE Statements RC ENDSCOPE ;
+
+Statement : Type ID SC { 
+	assertNotDefinedInScope($2.lexema); 
+	$2.type = $1.type;
+	$2.place = newTemp();
+	st.addVar($2.lexema, $2.type, $2.place);  	
+}
+
+Statement : Type ID ASSIGN Exp SC {
+	assertNotDefinedInScope($2.lexema); 
+	assertTypeAssignment($4.type, $1.type);
+	$2.type = $1.type;
+	$2.place = newTemp();
+	st.addVar($2.lexema, $2.type, $2.place);
+
+	if ($1.type == VarType::TYPE_BOOL) {
+		bp($4.falseList, next());
+		emit($2.place + $3.lexema + "0");
+		$$.nextList = makelist(next());
+		emit("goto ");
+		bp($4.trueList, next());
+		emit($2.place + $3.lexema + "1");
+
+	}  
+	else {
+		emit($2.place + $3.lexema + $4.place);
+	}
+
+}
+Statement : ID ASSIGN Exp SC {
+	assertDefinedGlobaly($1.lexema);
+	assertTypeAssignment($3.type, st.getTypeOf($1.lexema));
+	$1.type = st.getTypeOf($1.lexema);	
+	$1.place = st.getPlaceOf($1.lexema);	
+
+	if ($1.type == VarType::TYPE_BOOL) {
+		bp($3.falseList, next());
+		emit($1.place + $2.lexema + "0");
+		$$.nextList = makelist(next());
+		emit("goto ");
+		bp($3.trueList, next());
+		emit($1.place + $2.lexema + "1");
+
+	}  
+	else {
+		emit($1.place + $2.lexema + $3.place);
+	}
+}
+Statement : PRINT Exp SC {
+	assertDefinedGlobaly($2.lexema);
+	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
+	print($2.place, $2.type);
+
+	
+}
+Statement : PRINT STRING SC ;
+Statement : INPUT ID SC {
+	assertDefinedGlobaly($2.lexema);
+	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
+
+}
+Statement : IF LP IN_COND Exp END_IN_COND RP BEGOLS Statement ENDOLS %prec IF {
+	assertVarType(VarType::TYPE_BOOL, $3.type);
+}
+
+Statement : IF LP IN_COND Exp END_IN_COND RP BEGOLS Statement ENDOLS  ELSE BEGOLS Statement ENDOLS {
+	assertVarType(VarType::TYPE_BOOL, $3.type);
+}
+
+Statement : WHILE LP IN_COND Exp END_IN_COND RP BEGBREAK BEGOLS Statement ENDOLS ENDBREAK {
+	assertVarType(VarType::TYPE_BOOL, $3.type);
+
+}
+Statement : BREAK SC {
+	assertCanBreak();
+}
+Statement : SWITCH LP Exp RP LC CasesList RC {
+	VarType type = $3.type; 
+	assertThat(type == VarType::TYPE_DECIMAL || type == VarType::TYPE_BINARY || type == VarType::TYPE_HEXIDECIMAL);
+}
+
+CasesList : CaseStat CasesList;
+CasesList : CaseStat;
+CaseStat : CASE NUM BaseType COL  BEGOLS Statement  ENDOLS BEGBREAK BREAK ENDBREAK SC;
+
+BaseType : DECIMAL {
+	$$.type = VarType::TYPE_DECIMAL;
+}
+
+BaseType : BINARY {
+	$$.type = VarType::TYPE_BINARY;
+}
+
+BaseType : HEXIDECIMAL {
+	$$.type = VarType::TYPE_HEXIDECIMAL;
+}
+
+Type : BaseType {
+	$$.type = $1.type;
+}
+
+Type : BOOL {
+	$$.type = VarType::TYPE_BOOL;
+}
+
+Exp : LP Exp RP {
+	$$.type = $2.type;
+	$$.place = $2.place;
+}
+
+Exp : Exp PLUS Exp  
+	| Exp MINUS Exp 
+	| Exp MULT Exp  
+	| Exp DIV Exp     {
+	assertVarTypeNot(VarType::TYPE_BOOL, $1.type);
+	assertVarTypeNot(VarType::TYPE_BOOL, $3.type);
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = $1.type;
+
+	$$.place = newTemp();
+	emit($$.place + "=" + $1.place + $2.lexema + $3.place);
+
+}
+
+Exp : ID {
+	assertDefinedGlobaly($1.lexema);
+	$1.type = st.getTypeOf($1.lexema); 
+	$$.type = $1.type;
+	$$.place = st.getPlaceOf($1.lexema);
+
+	if (inCond && $$.type == VarType::TYPE_BOOL) {
+		$$.trueList = makelist(next());
+		emit("if " + $$.place +  "=="  + "1" + " goto " );
+		$$.falseList = makelist(next());
+		emit("goto ");
+	}
+}
+
+
+Exp : NUM {
+	$$.type = VarType::TYPE_DECIMAL;
+	$$.place = $$.place = newTemp();
+	emit($$.place + "=" + toDecimal($1.lexema, 10));
+}
+
+Exp : NUM BaseType {
+	$$.type = $2.type;
+	$$.place = newTemp();
+	emit($$.place + "=" + toDecimal($1.lexema, getBaseOf($2.type)));
+
+}
+
+Exp : TRUE {
+	$$.type = VarType::TYPE_BOOL;
+	$$.trueList = makelist(next());
+	emit("goto ");
+}
+
+Exp : FALSE {
+	$$.type = VarType::TYPE_BOOL;
+	$$.falseList = makelist(next());
+	emit("goto ");
+}
+
+Exp : NOT Exp {
+	assertVarType(VarType::TYPE_BOOL, $2.type);
+	$$.type = VarType::TYPE_BOOL;
+	$$.falseList = $2.trueList;
+	$$.trueList = $2.falseList;
+
+}
+
+Exp : Exp OR M Exp {
+	assertVarType(VarType::TYPE_BOOL, $1.type);
+	assertVarType(VarType::TYPE_BOOL, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+
+	bp($1.falseList, $3.next);
+	$$.falseList = $4.falseList;
+	$$.trueList = merge($1.trueList, $4.trueList);
+}
+
+Exp : Exp AND M Exp {
+	assertVarType(VarType::TYPE_BOOL, $1.type);
+	assertVarType(VarType::TYPE_BOOL, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	
+	bp($1.trueList, $3.next);
+	$$.trueList = $4.trueList;
+	$$.falseList = merge($1.falseList, $4.falseList);
+
+}
+
+Exp : Exp EVEN_LT Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	
+	$$.trueList = makelist(next());
+	emit("if " + $1.place +  "<"  + $3.place + " goto ");
+	$$.trueList = merge($$.trueList, makelist(next()));
+	emit("if " + $1.place + "==" + $3.place + " goto ");
+	$$.falseList = makelist(next());
+	emit("goto ");
+}
+
+Exp : Exp EVEN_GT Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	
+	$$.trueList = makelist(next());
+	emit("if " + $1.place +  ">"  + $3.place + " goto ");
+	$$.trueList = merge($$.trueList, makelist(next()));
+	emit("if" + $1.place + "==" + $3.place + " goto ");
+	$$.falseList = makelist(next());
+	emit("goto ");
+}
+
+Exp : Exp EVEN Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	emitRopExpression($$, $1, "==", $3);
+}
+
+Exp : Exp NOT_EVEN Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	emitRopExpression($$, $1, "!=", $3);
+}
+
+Exp : Exp LT Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	emitRopExpression($$, $1, "<", $3);
+
+}
+
+Exp : Exp GT Exp {
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = VarType::TYPE_BOOL;
+	emitRopExpression($$, $1, ">", $3);
+	
+}
+
+%%
+
+int main(){
+	return yyparse();
+}
+
+void print(string var, VarType type) {
+	
+	string printType;
+	if (type == VarType::TYPE_DECIMAL) {
+		printType = "printD ";
+	}
+	else if (type == VarType::TYPE_HEXIDECIMAL) {
+		printType = "printH ";
+	}
+	else if (type == VarType::TYPE_BINARY) {
+		printType = "printB ";
+	}
+	cout << printType  + var << endl;
+	
+}
+
+void emitAopExpression(string target, string lhs, string aop, string rhs) {
+	emit(target + "=" + lhs + aop + rhs);
+}
+
+string toDecimal(string numstr, int base) {
+	return to_string(stoul(numstr, NULL, base));
+}
+
+int getBaseOf(VarType varType) {
+	if (varType == VarType::TYPE_BINARY) 	return 2;
+	else if (varType == TYPE_HEXIDECIMAL) 	return 16;
+	else  									return 10;
+}
+
+void emitRopExpression(Attribute& target, Attribute& lhs, string rop, Attribute& rhs) {
+	target.trueList = makelist(next());
+	emit("if " + lhs.place +  rop  + rhs.place + " goto ");
+	target.falseList = makelist(next());
+	emit("goto ");
+}
+
+void assertThat(bool condition) {
+	if (!condition) {
+		errorMismatch(yylineno);
+		exit(1);
+	}
+}
+
+void assertNotDefinedInScope(string& name) {
+	if (st.isDefinedInScope(name)) {
+		errorDef(yylineno,name.c_str());
+		exit(1);
+	}
+}
+
+void assertDefinedGlobaly(string& name) {
+	if (!st.isDefined(name)) {
+		errorUndef(yylineno, name.c_str());
+		exit(1);
+	}
+}
+
+void assertTypeAssignment(VarType from, VarType to) {
+	//std::cout << "from = " << from << " to = " << to << std::endl;
+	if (from == VarType::TYPE_BOOL) {
+		assertVarType(VarType::TYPE_BOOL, to);
+	}
+	if (to == VarType::TYPE_BOOL) {
+		assertVarType(VarType::TYPE_BOOL, from);
+	}
+}
+
+void assertVarTypeNot(VarType forbidden, VarType type) {
+	if (forbidden == type) {
+		errorMismatch(yylineno);
+		exit(1);
+	}
+}
+
+void assertVarType(VarType desired, VarType type) {
+	if (desired != type) {
+		errorMismatch(yylineno);
+		exit(1);
+	}
+}
+
+void assertCanBreak() {
+	if (!inBreak) {
+		errorUnexpectedBreak(yylineno);
+		exit(1);
+	}
+}
+
+void yyerror(const char*){
+	errorSyn(yylineno);
+	exit(0);
+}
+															
