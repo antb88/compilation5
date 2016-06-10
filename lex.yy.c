@@ -888,102 +888,141 @@ return COL;
 case 7:
 YY_RULE_SETUP
 #line 21 "source.lex"
-return ASSIGN;
+{
+	yylval.lexema = yytext;
+	return ASSIGN;
+}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "source.lex"
-return PLUS;
+#line 25 "source.lex"
+{
+	yylval.lexema = yytext;
+	return PLUS;
+}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "source.lex"
-return MINUS;
+#line 29 "source.lex"
+{
+	yylval.lexema = yytext;
+	return MINUS;
+}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "source.lex"
-return MULT;
+#line 33 "source.lex"
+{
+	yylval.lexema = yytext;
+	return MULT;
+}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "source.lex"
-return DIV;
+#line 37 "source.lex"
+{
+	yylval.lexema = yytext;
+	return DIV;
+}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "source.lex"
-return EVEN_LT;
+#line 41 "source.lex"
+{
+	yylval.lexema = yytext;
+	return EVEN_LT;
+}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "source.lex"
-return EVEN_GT;
+#line 45 "source.lex"
+{
+	yylval.lexema = yytext;
+	return EVEN_GT;
+}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "source.lex"
-return EVEN;
+#line 49 "source.lex"
+{
+	yylval.lexema = yytext;
+	return EVEN;
+}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "source.lex"
-return NOT_EVEN;
+#line 53 "source.lex"
+{
+	yylval.lexema = yytext;
+	return NOT_EVEN;
+}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "source.lex"
-return GT;
+#line 57 "source.lex"
+{
+	yylval.lexema = yytext;
+	return GT;
+}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "source.lex"
-return LT;				
+#line 61 "source.lex"
+{
+	yylval.lexema = yytext;	
+	return LT;
+}				
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "source.lex"
-return AND;
+#line 65 "source.lex"
+{
+	yylval.lexema = yytext;
+	return AND;
+}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "source.lex"
-return OR;
+#line 69 "source.lex"
+{
+	yylval.lexema = yytext;
+	return OR;
+}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "source.lex"
+#line 73 "source.lex"
 return DECIMAL; 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "source.lex"
+#line 74 "source.lex"
 return BINARY;												
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 36 "source.lex"
+#line 75 "source.lex"
 return HEXIDECIMAL;													
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 37 "source.lex"
+#line 76 "source.lex"
 return INT;													
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 38 "source.lex"
+#line 77 "source.lex"
 return PRINT;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 39 "source.lex"
+#line 78 "source.lex"
 return INPUT;
 	YY_BREAK
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 40 "source.lex"
+#line 79 "source.lex"
 {
 	yylval.lexema = yytext;
 	return STRING;
@@ -991,42 +1030,42 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 44 "source.lex"
+#line 83 "source.lex"
 return TRUE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 45 "source.lex"
+#line 84 "source.lex"
 return FALSE;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 46 "source.lex"
+#line 85 "source.lex"
 return IF;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 47 "source.lex"
+#line 86 "source.lex"
 return ELSE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 48 "source.lex"
+#line 87 "source.lex"
 return WHILE;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 49 "source.lex"
+#line 88 "source.lex"
 return BREAK;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 50 "source.lex"
+#line 89 "source.lex"
 return NOT;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 51 "source.lex"
+#line 90 "source.lex"
 {
 	yylval.lexema = yytext;
 	return BOOL;
@@ -1034,7 +1073,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 55 "source.lex"
+#line 94 "source.lex"
 {
 	yylval.lexema = yytext;
 	yylval.type = VarType::TYPE_DECIMAL;
@@ -1043,17 +1082,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 60 "source.lex"
+#line 99 "source.lex"
 return SWITCH;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 61 "source.lex"
+#line 100 "source.lex"
 return CASE;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 62 "source.lex"
+#line 101 "source.lex"
 {
 	yylval.lexema = yytext;
 	return ID;
@@ -1062,26 +1101,26 @@ YY_RULE_SETUP
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 66 "source.lex"
+#line 105 "source.lex"
 {}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 67 "source.lex"
+#line 106 "source.lex"
 {}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 68 "source.lex"
+#line 107 "source.lex"
 {errorLex(yylineno);exit(0);}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 70 "source.lex"
+#line 109 "source.lex"
 ECHO;
 	YY_BREAK
-#line 1085 "lex.yy.c"
+#line 1124 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2094,7 +2133,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 70 "source.lex"
+#line 109 "source.lex"
 
 
 

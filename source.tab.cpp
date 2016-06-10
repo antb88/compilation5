@@ -483,12 +483,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    66,    66,    68,    72,    82,    86,    90,    94,    98,
-     102,   106,   110,   111,   112,   114,   121,   142,   161,   168,
-     169,   174,   178,   182,   186,   189,   194,   195,   196,   198,
-     202,   206,   210,   214,   218,   223,   224,   225,   226,   237,
-     252,   258,   265,   271,   277,   285,   295,   306,   318,   330,
-     336,   342,   349
+       0,    66,    66,    70,    74,    84,    88,    92,    96,   100,
+     104,   108,   112,   113,   114,   116,   123,   145,   164,   171,
+     174,   180,   184,   188,   192,   195,   200,   201,   202,   204,
+     208,   212,   216,   220,   224,   229,   239,   249,   259,   271,
+     286,   291,   297,   303,   309,   317,   327,   338,   350,   362,
+     368,   374,   381
 };
 #endif
 
@@ -1356,96 +1356,104 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 3:
-#line 68 "source.ypp" /* yacc.c:1646  */
+        case 2:
+#line 66 "source.ypp" /* yacc.c:1646  */
     {
-	st.newScope();
+	printBuffer();
 }
 #line 1365 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 3:
+#line 70 "source.ypp" /* yacc.c:1646  */
+    {
+	st.newScope();
+}
+#line 1373 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 4:
-#line 72 "source.ypp" /* yacc.c:1646  */
+#line 74 "source.ypp" /* yacc.c:1646  */
     {
 	if (st.currentScope().size()) {
-		st.deleteAndPrintScope();
+		st.deleteScope();
 	}
 	else {
 		st.deleteScope();
-	}
-}
-#line 1378 "source.tab.cpp" /* yacc.c:1646  */
-    break;
-
-  case 5:
-#line 82 "source.ypp" /* yacc.c:1646  */
-    {
-	st.newScope();
+	} 
 }
 #line 1386 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 6:
-#line 86 "source.ypp" /* yacc.c:1646  */
+  case 5:
+#line 84 "source.ypp" /* yacc.c:1646  */
     {
-	st.deleteAndPrintScope();	
+	st.newScope();
 }
 #line 1394 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 7:
-#line 90 "source.ypp" /* yacc.c:1646  */
+  case 6:
+#line 88 "source.ypp" /* yacc.c:1646  */
     {
-	inBreak++;
+	st.deleteScope();	
 }
 #line 1402 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 8:
-#line 94 "source.ypp" /* yacc.c:1646  */
+  case 7:
+#line 92 "source.ypp" /* yacc.c:1646  */
     {
-	inBreak--;
+	inBreak++;
 }
 #line 1410 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 9:
-#line 98 "source.ypp" /* yacc.c:1646  */
+  case 8:
+#line 96 "source.ypp" /* yacc.c:1646  */
     {
-	(yyval).next = next();
+	inBreak--;
 }
 #line 1418 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 102 "source.ypp" /* yacc.c:1646  */
+  case 9:
+#line 100 "source.ypp" /* yacc.c:1646  */
     {
-	inCond++;
+	(yyval).next = next();
 }
 #line 1426 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 106 "source.ypp" /* yacc.c:1646  */
+  case 10:
+#line 104 "source.ypp" /* yacc.c:1646  */
     {
-	inCond--;
+	inCond++;
 }
 #line 1434 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 11:
+#line 108 "source.ypp" /* yacc.c:1646  */
+    {
+	inCond--;
+}
+#line 1442 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 15:
-#line 114 "source.ypp" /* yacc.c:1646  */
+#line 116 "source.ypp" /* yacc.c:1646  */
     { 
 	assertNotDefinedInScope((yyvsp[-1]).lexema); 
 	(yyvsp[-1]).type = (yyvsp[-2]).type;
 	(yyvsp[-1]).place = newTemp();
 	st.addVar((yyvsp[-1]).lexema, (yyvsp[-1]).type, (yyvsp[-1]).place);  	
 }
-#line 1445 "source.tab.cpp" /* yacc.c:1646  */
+#line 1453 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 121 "source.ypp" /* yacc.c:1646  */
+#line 123 "source.ypp" /* yacc.c:1646  */
     {
 	assertNotDefinedInScope((yyvsp[-3]).lexema); 
 	assertTypeAssignment((yyvsp[-1]).type, (yyvsp[-4]).type);
@@ -1465,13 +1473,14 @@ yyreduce:
 	else {
 		emit((yyvsp[-3]).place + (yyvsp[-2]).lexema + (yyvsp[-1]).place);
 	}
+	
 
 }
-#line 1471 "source.tab.cpp" /* yacc.c:1646  */
+#line 1480 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 142 "source.ypp" /* yacc.c:1646  */
+#line 145 "source.ypp" /* yacc.c:1646  */
     {
 	assertDefinedGlobaly((yyvsp[-3]).lexema);
 	assertTypeAssignment((yyvsp[-1]).type, st.getTypeOf((yyvsp[-3]).lexema));
@@ -1491,124 +1500,133 @@ yyreduce:
 		emit((yyvsp[-3]).place + (yyvsp[-2]).lexema + (yyvsp[-1]).place);
 	}
 }
-#line 1495 "source.tab.cpp" /* yacc.c:1646  */
+#line 1504 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 161 "source.ypp" /* yacc.c:1646  */
+#line 164 "source.ypp" /* yacc.c:1646  */
     {
-	assertDefinedGlobaly((yyvsp[-1]).lexema);
-	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf((yyvsp[-1]).lexema));
+	//assertDefinedGlobaly($2.lexema);
+	//assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
 	print((yyvsp[-1]).place, (yyvsp[-1]).type);
-
+ 	
 	
 }
-#line 1507 "source.tab.cpp" /* yacc.c:1646  */
+#line 1516 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 171 "source.ypp" /* yacc.c:1646  */
+    {
+	emit("print \"" + (yyvsp[-1]).lexema + "\"");
+}
+#line 1524 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 169 "source.ypp" /* yacc.c:1646  */
+#line 174 "source.ypp" /* yacc.c:1646  */
     {
 	assertDefinedGlobaly((yyvsp[-1]).lexema);
 	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf((yyvsp[-1]).lexema));
+	emit("input " + st.getPlaceOf((yyvsp[-1]).lexema));
 
 }
-#line 1517 "source.tab.cpp" /* yacc.c:1646  */
+#line 1535 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 174 "source.ypp" /* yacc.c:1646  */
+#line 180 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-6]).type);
 }
-#line 1525 "source.tab.cpp" /* yacc.c:1646  */
+#line 1543 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 178 "source.ypp" /* yacc.c:1646  */
+#line 184 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-10]).type);
 }
-#line 1533 "source.tab.cpp" /* yacc.c:1646  */
+#line 1551 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 182 "source.ypp" /* yacc.c:1646  */
+#line 188 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-8]).type);
 
 }
-#line 1542 "source.tab.cpp" /* yacc.c:1646  */
+#line 1560 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 186 "source.ypp" /* yacc.c:1646  */
+#line 192 "source.ypp" /* yacc.c:1646  */
     {
 	assertCanBreak();
 }
-#line 1550 "source.tab.cpp" /* yacc.c:1646  */
+#line 1568 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 189 "source.ypp" /* yacc.c:1646  */
+#line 195 "source.ypp" /* yacc.c:1646  */
     {
 	VarType type = (yyvsp[-4]).type; 
 	assertThat(type == VarType::TYPE_DECIMAL || type == VarType::TYPE_BINARY || type == VarType::TYPE_HEXIDECIMAL);
 }
-#line 1559 "source.tab.cpp" /* yacc.c:1646  */
+#line 1577 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 198 "source.ypp" /* yacc.c:1646  */
+#line 204 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_DECIMAL;
 }
-#line 1567 "source.tab.cpp" /* yacc.c:1646  */
+#line 1585 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 202 "source.ypp" /* yacc.c:1646  */
+#line 208 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_BINARY;
 }
-#line 1575 "source.tab.cpp" /* yacc.c:1646  */
+#line 1593 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 206 "source.ypp" /* yacc.c:1646  */
+#line 212 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_HEXIDECIMAL;
 }
-#line 1583 "source.tab.cpp" /* yacc.c:1646  */
+#line 1601 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 210 "source.ypp" /* yacc.c:1646  */
+#line 216 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = (yyvsp[0]).type;
 }
-#line 1591 "source.tab.cpp" /* yacc.c:1646  */
+#line 1609 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 214 "source.ypp" /* yacc.c:1646  */
+#line 220 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_BOOL;
 }
-#line 1599 "source.tab.cpp" /* yacc.c:1646  */
+#line 1617 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 218 "source.ypp" /* yacc.c:1646  */
+#line 224 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = (yyvsp[-1]).type;
 	(yyval).place = (yyvsp[-1]).place;
 }
-#line 1608 "source.tab.cpp" /* yacc.c:1646  */
+#line 1626 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
-  case 38:
-#line 226 "source.ypp" /* yacc.c:1646  */
+  case 35:
+#line 229 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[-2]).type);
 	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[0]).type);
@@ -1617,13 +1635,59 @@ yyreduce:
 
 	(yyval).place = newTemp();
 	emit((yyval).place + "=" + (yyvsp[-2]).place + (yyvsp[-1]).lexema + (yyvsp[0]).place);
+	
+}
+#line 1641 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 239 "source.ypp" /* yacc.c:1646  */
+    {
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[-2]).type);
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[0]).type);
+	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
+	(yyval).type = (yyvsp[-2]).type;
+
+	(yyval).place = newTemp();
+	emit((yyval).place + "=" + (yyvsp[-2]).place + (yyvsp[-1]).lexema + (yyvsp[0]).place);
+	
+}
+#line 1656 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 37:
+#line 249 "source.ypp" /* yacc.c:1646  */
+    {
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[-2]).type);
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[0]).type);
+	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
+	(yyval).type = (yyvsp[-2]).type;
+
+	(yyval).place = newTemp();
+	emit((yyval).place + "=" + (yyvsp[-2]).place + (yyvsp[-1]).lexema + (yyvsp[0]).place);
+	
+}
+#line 1671 "source.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 38:
+#line 259 "source.ypp" /* yacc.c:1646  */
+    {
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[-2]).type);
+	assertVarTypeNot(VarType::TYPE_BOOL, (yyvsp[0]).type);
+	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
+	(yyval).type = (yyvsp[-2]).type;
+
+	(yyval).place = newTemp();
+	emit((yyval).place + "=" + (yyvsp[-2]).place + (yyvsp[-1]).lexema + (yyvsp[0]).place);
+	
 
 }
-#line 1623 "source.tab.cpp" /* yacc.c:1646  */
+#line 1687 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 237 "source.ypp" /* yacc.c:1646  */
+#line 271 "source.ypp" /* yacc.c:1646  */
     {
 	assertDefinedGlobaly((yyvsp[0]).lexema);
 	(yyvsp[0]).type = st.getTypeOf((yyvsp[0]).lexema); 
@@ -1637,52 +1701,50 @@ yyreduce:
 		emit("goto ");
 	}
 }
-#line 1641 "source.tab.cpp" /* yacc.c:1646  */
+#line 1705 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 252 "source.ypp" /* yacc.c:1646  */
+#line 286 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_DECIMAL;
-	(yyval).place = (yyval).place = newTemp();
-	emit((yyval).place + "=" + toDecimal((yyvsp[0]).lexema, 10));
+	(yyval).place = toDecimal((yyvsp[0]).lexema, 10);
 }
-#line 1651 "source.tab.cpp" /* yacc.c:1646  */
+#line 1714 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 258 "source.ypp" /* yacc.c:1646  */
+#line 291 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = (yyvsp[0]).type;
-	(yyval).place = newTemp();
-	emit((yyval).place + "=" + toDecimal((yyvsp[-1]).lexema, getBaseOf((yyvsp[0]).type)));
+	(yyval).place = toDecimal((yyvsp[-1]).lexema, getBaseOf((yyvsp[0]).type));
 
 }
-#line 1662 "source.tab.cpp" /* yacc.c:1646  */
+#line 1724 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 265 "source.ypp" /* yacc.c:1646  */
+#line 297 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_BOOL;
 	(yyval).trueList = makelist(next());
 	emit("goto ");
 }
-#line 1672 "source.tab.cpp" /* yacc.c:1646  */
+#line 1734 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 271 "source.ypp" /* yacc.c:1646  */
+#line 303 "source.ypp" /* yacc.c:1646  */
     {
 	(yyval).type = VarType::TYPE_BOOL;
 	(yyval).falseList = makelist(next());
 	emit("goto ");
 }
-#line 1682 "source.tab.cpp" /* yacc.c:1646  */
+#line 1744 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 277 "source.ypp" /* yacc.c:1646  */
+#line 309 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
@@ -1690,11 +1752,11 @@ yyreduce:
 	(yyval).trueList = (yyvsp[0]).falseList;
 
 }
-#line 1694 "source.tab.cpp" /* yacc.c:1646  */
+#line 1756 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 285 "source.ypp" /* yacc.c:1646  */
+#line 317 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-3]).type);
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-1]).type);
@@ -1704,11 +1766,11 @@ yyreduce:
 	(yyval).falseList = (yyvsp[0]).falseList;
 	(yyval).trueList = merge((yyvsp[-3]).trueList, (yyvsp[0]).trueList);
 }
-#line 1708 "source.tab.cpp" /* yacc.c:1646  */
+#line 1770 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 295 "source.ypp" /* yacc.c:1646  */
+#line 327 "source.ypp" /* yacc.c:1646  */
     {
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-3]).type);
 	assertVarType(VarType::TYPE_BOOL, (yyvsp[-1]).type);
@@ -1719,11 +1781,11 @@ yyreduce:
 	(yyval).falseList = merge((yyvsp[-3]).falseList, (yyvsp[0]).falseList);
 
 }
-#line 1723 "source.tab.cpp" /* yacc.c:1646  */
+#line 1785 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 306 "source.ypp" /* yacc.c:1646  */
+#line 338 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
@@ -1735,11 +1797,11 @@ yyreduce:
 	(yyval).falseList = makelist(next());
 	emit("goto ");
 }
-#line 1739 "source.tab.cpp" /* yacc.c:1646  */
+#line 1801 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 318 "source.ypp" /* yacc.c:1646  */
+#line 350 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
@@ -1751,53 +1813,53 @@ yyreduce:
 	(yyval).falseList = makelist(next());
 	emit("goto ");
 }
-#line 1755 "source.tab.cpp" /* yacc.c:1646  */
+#line 1817 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 330 "source.ypp" /* yacc.c:1646  */
+#line 362 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
 	emitRopExpression((yyval), (yyvsp[-2]), "==", (yyvsp[0]));
 }
-#line 1765 "source.tab.cpp" /* yacc.c:1646  */
+#line 1827 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 336 "source.ypp" /* yacc.c:1646  */
+#line 368 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
 	emitRopExpression((yyval), (yyvsp[-2]), "!=", (yyvsp[0]));
 }
-#line 1775 "source.tab.cpp" /* yacc.c:1646  */
+#line 1837 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 342 "source.ypp" /* yacc.c:1646  */
+#line 374 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
 	emitRopExpression((yyval), (yyvsp[-2]), "<", (yyvsp[0]));
 
 }
-#line 1786 "source.tab.cpp" /* yacc.c:1646  */
+#line 1848 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 349 "source.ypp" /* yacc.c:1646  */
+#line 381 "source.ypp" /* yacc.c:1646  */
     {
 	assertTypeAssignment((yyvsp[-2]).type, (yyvsp[0]).type);
 	(yyval).type = VarType::TYPE_BOOL;
 	emitRopExpression((yyval), (yyvsp[-2]), ">", (yyvsp[0]));
 	
 }
-#line 1797 "source.tab.cpp" /* yacc.c:1646  */
+#line 1859 "source.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1801 "source.tab.cpp" /* yacc.c:1646  */
+#line 1863 "source.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2025,7 +2087,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 356 "source.ypp" /* yacc.c:1906  */
+#line 388 "source.ypp" /* yacc.c:1906  */
 
 
 int main(){
@@ -2044,7 +2106,7 @@ void print(string var, VarType type) {
 	else if (type == VarType::TYPE_BINARY) {
 		printType = "printB ";
 	}
-	cout << printType  + var << endl;
+	emit(printType  + var);
 	
 }
 

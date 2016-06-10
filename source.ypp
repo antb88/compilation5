@@ -63,7 +63,9 @@
 %right NOT
 %%
 
-Prog : BEGSCOPE Statements ENDSCOPE	;
+Prog : BEGSCOPE Statements ENDSCOPE	 {
+	printBuffer();
+}
 
 BEGOLS : /*epsilon*/ {
 	st.newScope();
@@ -71,11 +73,11 @@ BEGOLS : /*epsilon*/ {
 
 ENDOLS : /*epsilon*/ {
 	if (st.currentScope().size()) {
-		st.deleteAndPrintScope();
+		st.deleteScope();
 	}
 	else {
 		st.deleteScope();
-	}
+	} 
 } 
 
 
@@ -84,7 +86,7 @@ BEGSCOPE : /*epsilon*/ {
 }
 
 ENDSCOPE : /*epsilon*/ {
-	st.deleteAndPrintScope();	
+	st.deleteScope();	
 }
 
 BEGBREAK : /*epsilon*/ {
@@ -137,6 +139,7 @@ Statement : Type ID ASSIGN Exp SC {
 	else {
 		emit($2.place + $3.lexema + $4.place);
 	}
+	
 
 }
 Statement : ID ASSIGN Exp SC {
@@ -159,16 +162,19 @@ Statement : ID ASSIGN Exp SC {
 	}
 }
 Statement : PRINT Exp SC {
-	assertDefinedGlobaly($2.lexema);
-	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
+	//assertDefinedGlobaly($2.lexema);
+	//assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
 	print($2.place, $2.type);
-
+ 	
 	
 }
-Statement : PRINT STRING SC ;
+Statement : PRINT STRING SC {
+	emit("print \"" + $2.lexema + "\"");
+}
 Statement : INPUT ID SC {
 	assertDefinedGlobaly($2.lexema);
 	assertVarTypeNot(VarType::TYPE_BOOL, st.getTypeOf($2.lexema));
+	emit("input " + st.getPlaceOf($2.lexema));
 
 }
 Statement : IF LP IN_COND Exp END_IN_COND RP BEGOLS Statement ENDOLS %prec IF {
@@ -220,9 +226,36 @@ Exp : LP Exp RP {
 	$$.place = $2.place;
 }
 
-Exp : Exp PLUS Exp  
-	| Exp MINUS Exp 
-	| Exp MULT Exp  
+Exp : Exp PLUS Exp  {
+	assertVarTypeNot(VarType::TYPE_BOOL, $1.type);
+	assertVarTypeNot(VarType::TYPE_BOOL, $3.type);
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = $1.type;
+
+	$$.place = newTemp();
+	emit($$.place + "=" + $1.place + $2.lexema + $3.place);
+	
+}
+	| Exp MINUS Exp {
+	assertVarTypeNot(VarType::TYPE_BOOL, $1.type);
+	assertVarTypeNot(VarType::TYPE_BOOL, $3.type);
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = $1.type;
+
+	$$.place = newTemp();
+	emit($$.place + "=" + $1.place + $2.lexema + $3.place);
+	
+} 
+	| Exp MULT Exp {
+	assertVarTypeNot(VarType::TYPE_BOOL, $1.type);
+	assertVarTypeNot(VarType::TYPE_BOOL, $3.type);
+	assertTypeAssignment($1.type, $3.type);
+	$$.type = $1.type;
+
+	$$.place = newTemp();
+	emit($$.place + "=" + $1.place + $2.lexema + $3.place);
+	
+}  
 	| Exp DIV Exp     {
 	assertVarTypeNot(VarType::TYPE_BOOL, $1.type);
 	assertVarTypeNot(VarType::TYPE_BOOL, $3.type);
@@ -231,6 +264,7 @@ Exp : Exp PLUS Exp
 
 	$$.place = newTemp();
 	emit($$.place + "=" + $1.place + $2.lexema + $3.place);
+	
 
 }
 
@@ -251,14 +285,12 @@ Exp : ID {
 
 Exp : NUM {
 	$$.type = VarType::TYPE_DECIMAL;
-	$$.place = $$.place = newTemp();
-	emit($$.place + "=" + toDecimal($1.lexema, 10));
+	$$.place = toDecimal($1.lexema, 10);
 }
 
 Exp : NUM BaseType {
 	$$.type = $2.type;
-	$$.place = newTemp();
-	emit($$.place + "=" + toDecimal($1.lexema, getBaseOf($2.type)));
+	$$.place = toDecimal($1.lexema, getBaseOf($2.type));
 
 }
 
@@ -371,7 +403,7 @@ void print(string var, VarType type) {
 	else if (type == VarType::TYPE_BINARY) {
 		printType = "printB ";
 	}
-	cout << printType  + var << endl;
+	emit(printType  + var);
 	
 }
 

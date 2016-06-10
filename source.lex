@@ -18,19 +18,58 @@ whiteSpace	([\t\n\r ])
 (\})	return RC;
 (\;)	return SC;
 (\:)	return COL;
-(\=)	return ASSIGN;
-(\+)	return PLUS;
-(\-)	return MINUS;
-(\*)	return MULT;
-(\/)	return DIV;
-(<=)	return EVEN_LT;
-(>=)	return EVEN_GT;
-(==)	return EVEN;
-(!=)	return NOT_EVEN;
-(>)	return GT;
-(<)	return LT;				
-and	return AND;
-or	return OR;
+(\=)	{
+	yylval.lexema = yytext;
+	return ASSIGN;
+}
+(\+)	{
+	yylval.lexema = yytext;
+	return PLUS;
+}
+(\-)	{
+	yylval.lexema = yytext;
+	return MINUS;
+}
+(\*)	{
+	yylval.lexema = yytext;
+	return MULT;
+}
+(\/)	{
+	yylval.lexema = yytext;
+	return DIV;
+}
+(<=)	{
+	yylval.lexema = yytext;
+	return EVEN_LT;
+}
+(>=)	{
+	yylval.lexema = yytext;
+	return EVEN_GT;
+}
+(==)	{
+	yylval.lexema = yytext;
+	return EVEN;
+}
+(!=)	{
+	yylval.lexema = yytext;
+	return NOT_EVEN;
+}
+(>)	{
+	yylval.lexema = yytext;
+	return GT;
+}
+(<)	{
+	yylval.lexema = yytext;	
+	return LT;
+}				
+and	{
+	yylval.lexema = yytext;
+	return AND;
+}
+or	{
+	yylval.lexema = yytext;
+	return OR;
+}
 D 	return DECIMAL; 
 B	return BINARY;												
 H	return HEXIDECIMAL;													
