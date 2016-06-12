@@ -20,7 +20,8 @@ void bp(list<int>& l, int address){
     ostringstream os;
     os << address;
     for(list<int>::iterator i = l.begin(); i != l.end(); i++){
-	buffer[*i] += os.str();
+		buffer[*i] += os.str();
+		//cerr << "backpatching " + to_string(*i) + " with " + to_string(address) << endl;
     }
 }
 

@@ -19,7 +19,7 @@ public:
 	string lexema;
 	VarType type;
 	string place;
-	list<int> trueList, falseList, nextList;
+	list<int> trueList, falseList, nextList, breakList;
 	int next;
 };
 
